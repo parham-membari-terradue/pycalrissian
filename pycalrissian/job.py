@@ -45,7 +45,8 @@ class CalrissianJob:
         keep_pods: bool = False,
         backoff_limit: int = 2,
         tool_logs: bool = False,
-        ttl_seconds_after_finished: int = None
+        ttl_seconds_after_finished: int = None,
+        max_gpu : str = '0'
     ):
 
         self.cwl = cwl
@@ -66,6 +67,7 @@ class CalrissianJob:
         self.volume_calrissian_wdir = "volume-calrissian-wdir"
         self.tool_logs = tool_logs
         self.ttl_seconds_after_finished = ttl_seconds_after_finished
+        self.max_gpu = max_gpu
 
         if runtime_context.service_account is not None:
             logger.info(f"using '{runtime_context.service_account}' service account selected from runtime context")
@@ -272,11 +274,46 @@ class CalrissianJob:
             backoff_limit=self.backoff_limit,
             ttl_seconds_after_finished=self.ttl_seconds_after_finished
         )
+    @staticmethod
+    def _get_resource_requirements(args):
+        try:
+            requests = {}
+            limits = {}
+
+            if "--max-gpu" in args:
+                gpu_index = args.index("--max-gpu") + 1
+                gpu_count = args[gpu_index]
+
+                if not str(gpu_count).isdigit() or int(gpu_count) < 1:
+                    raise ValueError(f"Invalid GPU count: '{gpu_count}' — must be a positive integer")
+
+                requests["nvidia.com/gpu"] = str(gpu_count)
+                limits["nvidia.com/gpu"] = str(gpu_count)
+
+                logger.info(f"GPU requirement parsed: {gpu_count} GPU(s)")
+            else:
+                requests = {"cpu": "1000m", "memory": "1G"}
+                limits = {"cpu": "2000m", "memory": "2G"}
+
+                logger.info("Using default CPU and memory resource requirements.")
+
+            # Create and validate the V1ResourceRequirements object
+            resource_obj = V1ResourceRequirements(requests=requests, limits=limits)
+            logger.debug(f"Resource requirements created: {resource_obj}")
+            return resource_obj
+        except (IndexError, ValueError) as e:
+            logger.error(f"Error parsing GPU requirements: {e}")
+            raise
+
+        except Exception as e:
+            logger.error(f"Unexpected error while creating resource requirements: {e}")
+            raise
 
     @staticmethod
     def create_container(
         image, name, args, command, volume_mounts, env, pull_policy="Always"
     ):
+        resources = CalrissianJob._get_resource_requirements(args)
 
         container = client.V1Container(
             image=image,
@@ -291,10 +328,7 @@ class CalrissianJob:
                     _exec=V1ExecAction(command=["/bin/sh", "-c", "sleep 30"])
                 )
             ),
-            resources=V1ResourceRequirements(
-                requests={"cpu": "1000m", "memory": "1G"},
-                limits={"cpu": "2000m", "memory": "2G"},
-            ),
+            resources=resources
         )
 
         return container
@@ -360,6 +394,10 @@ class CalrissianJob:
         args.extend(
             ["--max-ram", f"{self.max_ram}", "--max-cores", f"{self.max_cores}"]
         )
+        if self.max_gpu and int(self.max_gpu) > 0:
+            args.extend(
+                ["--max-gpu", self.max_gpu]
+            )
 
         args.extend(["--tmp-outdir-prefix", f"{self.calrissian_base_path}/"])
 

@@ -1,4 +1,4 @@
-cwlVersion: v1.0
+cwlVersion: v1.2
 
 class: CommandLineTool
 id: main
@@ -17,18 +17,26 @@ arguments:
 - $( inputs.reference )
 
 requirements:
+  cwltool:CUDARequirement:
+    cudaVersionMin: "11.4"
+    cudaComputeCapability: "3.0"
+    cudaDeviceCountMin: 1
+    cudaDeviceCountMax: 1
   DockerRequirement:
     dockerPull: ghcr.io/terradue/app-package-training-bids23/stage:1.0.0
   ResourceRequirement:
         coresMax: 2
         ramMax: 2000
         
+        
   InlineJavascriptRequirement: {}
   InitialWorkDirRequirement:
     listing:
       - entryname: stage.py
         entry: |-
-          !pip install cupy-cuda11x
+          import subprocess
+          subprocess.run(["nvidia-smi"])
+          subprocess.run(["pip", "install", "cupy-cuda11x"])
           import pystac
           import stac_asset
           import asyncio
@@ -61,3 +69,5 @@ requirements:
 
           href = sys.argv[1]
           cat = asyncio.run(main(href))
+$namespaces:
+  cwltool: "http://commonwl.org/cwltool#"

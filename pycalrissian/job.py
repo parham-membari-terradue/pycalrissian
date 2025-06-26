@@ -46,7 +46,7 @@ class CalrissianJob:
         backoff_limit: int = 2,
         tool_logs: bool = False,
         ttl_seconds_after_finished: int = None,
-        max_gpu : str = '0'
+        max_gpus : str = '0'
     ):
 
         self.cwl = cwl
@@ -67,7 +67,7 @@ class CalrissianJob:
         self.volume_calrissian_wdir = "volume-calrissian-wdir"
         self.tool_logs = tool_logs
         self.ttl_seconds_after_finished = ttl_seconds_after_finished
-        self.max_gpu = max_gpu
+        self.max_gpus = max_gpus
 
         if runtime_context.service_account is not None:
             logger.info(f"using '{runtime_context.service_account}' service account selected from runtime context")
@@ -277,11 +277,17 @@ class CalrissianJob:
     @staticmethod
     def _get_resource_requirements(args):
         try:
-            requests = {}
-            limits = {}
+            requests = {
+                "cpu": "1000m",      # default CPU request
+                "memory": "1G"       # default memory request
+            }
+            limits = {
+                "cpu": "2000m",      # default CPU limit
+                "memory": "2G"       # default memory limit
+            }
 
-            if "--max-gpu" in args:
-                gpu_index = args.index("--max-gpu") + 1
+            if "--max-gpus" in args:
+                gpu_index = args.index("--max-gpus") + 1
                 gpu_count = args[gpu_index]
 
                 if not str(gpu_count).isdigit() or int(gpu_count) < 1:
@@ -290,17 +296,21 @@ class CalrissianJob:
                 requests["nvidia.com/gpu"] = str(gpu_count)
                 limits["nvidia.com/gpu"] = str(gpu_count)
 
-                logger.info(f"GPU requirement parsed: {gpu_count} GPU(s)")
+                # Optionally bump CPU and memory when GPU requested (adjust as needed)
+                requests["cpu"] = "2000m"
+                requests["memory"] = "4G"
+                limits["cpu"] = "4000m"
+                limits["memory"] = "8G"
+
+                logger.info(f"GPU requirement parsed: {gpu_count} GPU(s), with adjusted CPU and memory")
+
             else:
-                requests = {"cpu": "1000m", "memory": "1G"}
-                limits = {"cpu": "2000m", "memory": "2G"}
+                logger.info("Using default CPU and memory resource requirements without GPU.")
 
-                logger.info("Using default CPU and memory resource requirements.")
-
-            # Create and validate the V1ResourceRequirements object
             resource_obj = V1ResourceRequirements(requests=requests, limits=limits)
             logger.debug(f"Resource requirements created: {resource_obj}")
             return resource_obj
+
         except (IndexError, ValueError) as e:
             logger.error(f"Error parsing GPU requirements: {e}")
             raise
@@ -308,6 +318,7 @@ class CalrissianJob:
         except Exception as e:
             logger.error(f"Unexpected error while creating resource requirements: {e}")
             raise
+
 
     @staticmethod
     def create_container(
@@ -394,9 +405,9 @@ class CalrissianJob:
         args.extend(
             ["--max-ram", f"{self.max_ram}", "--max-cores", f"{self.max_cores}"]
         )
-        if self.max_gpu and int(self.max_gpu) > 0:
+        if self.max_gpus and int(self.max_gpus) > 0:
             args.extend(
-                ["--max-gpu", self.max_gpu]
+                ["--max-gpus", self.max_gpus]
             )
 
         args.extend(["--tmp-outdir-prefix", f"{self.calrissian_base_path}/"])
@@ -462,7 +473,7 @@ class CalrissianJob:
             logger.info("pods created by calrissian will not be deleted")
 
         calrissian_image = os.getenv(
-            "CALRISSIAN_IMAGE", default="terradue/calrissian:0.12.0"
+            "CALRISSIAN_IMAGE", default="terradue/calrissian:0.18.1"
         )
 
         logger.info(f"using Calrissian image: {calrissian_image}")

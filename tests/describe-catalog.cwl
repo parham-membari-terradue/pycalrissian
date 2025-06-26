@@ -15,27 +15,40 @@ baseCommand:
 - stage.py
 arguments:
 - $( inputs.reference )
+
 requirements:
   DockerRequirement:
     dockerPull: ghcr.io/terradue/app-package-training-bids23/stage:1.0.0
+  ResourceRequirement:
+        coresMax: 2
+        ramMax: 2000
+        
   InlineJavascriptRequirement: {}
   InitialWorkDirRequirement:
     listing:
       - entryname: stage.py
         entry: |-
+          !pip install cupy-cuda11x
           import pystac
           import stac_asset
           import asyncio
           import os
           import sys
+          import cupy as cp  # GPU-backed NumPy-like library
 
           config = stac_asset.Config(warn=True)
 
           async def main(href: str):
-              
+              # STAC reading as before
               item = pystac.read_file(href)
               cwd = os.getcwd()
-              
+
+              # Add a dummy GPU computation (matrix multiplication)
+              print("Running a dummy GPU operation...")
+              a = cp.random.rand(1000, 1000)
+              b = cp.random.rand(1000, 1000)
+              cp.dot(a, b)  # Will be run on GPU
+
               cat = pystac.Catalog(
                   id="catalog",
                   description=f"catalog with staged {item.id}",
@@ -43,11 +56,8 @@ requirements:
               )
               cat.add_item(item)
               print(cat.describe())
-            #   cat.normalize_hrefs("./")
-            #   cat.save(catalog_type=pystac.CatalogType.SELF_CONTAINED)
 
               return cat
 
           href = sys.argv[1]
-
           cat = asyncio.run(main(href))

@@ -71,19 +71,19 @@ class TestCalrissianExecution(unittest.TestCase):
     def tearDown(cls):
         cls.session.dispose()
         
-    #@unittest.skipIf(os.getenv("CI_TEST_SKIP") == "1", "Test is skipped via env variable")
+    @unittest.skipIf(os.getenv("CI_TEST_SKIP") == "1", "Test is skipped via env variable")
     def test_describe_catalog_with_gpu(self):
         logger.info(f"-----\n------------------------------  test_describe_catalog_with_gpu must succeed  ------------------------------\n\n")
         os.environ["CALRISSIAN_IMAGE"] = "ghcr.io/duke-gcb/calrissian/calrissian:0.18.1"
 
-        with open("tests/describe-catalog.cwl", "r") as stream:
+        with open("tests/gpu-test.cwl", "r") as stream:
             cwl = yaml.safe_load(stream)
 
         params = {
             "reference": "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2B_10TFK_20210713_0_L2A"
         }
 
-
+        gpu_class= {'gpu-pool': 'A100-PCIE-40GB'}
         job = CalrissianJob(
             cwl=cwl,
             params=params,
@@ -91,15 +91,16 @@ class TestCalrissianExecution(unittest.TestCase):
             cwl_entry_point="main",
             #pod_env_vars=pod_env_vars,
             pod_node_selector={
-                "kubernetes.io/hostname": "eoepca-processing-test-cluster-1d5d-4f-pool-57cc-wdd8g"
-            },
+                "kubernetes.io/hostname": "eoepca-processing-test-cluster-1d5d-4f-pool-57cc-wdd8g",
+            },  
             debug=True,
-            # max_cores=2,
-            # max_ram="16G",
+            max_cores=2,
+            max_ram="16G",
             keep_pods=True,
             backoff_limit=1,
             tool_logs=True,
             max_gpus='1',
+            gpu_class=gpu_class
         )
         job.to_yaml("job.yml")
         execution = CalrissianExecution(job=job, runtime_context=self.session)

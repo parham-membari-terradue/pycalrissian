@@ -46,7 +46,8 @@ class CalrissianJob:
         backoff_limit: int = 2,
         tool_logs: bool = False,
         ttl_seconds_after_finished: int = None,
-        max_gpus : str = '0'
+        max_gpus : str = '0',
+        gpu_class: dict = None,
     ):
 
         self.cwl = cwl
@@ -68,7 +69,7 @@ class CalrissianJob:
         self.tool_logs = tool_logs
         self.ttl_seconds_after_finished = ttl_seconds_after_finished
         self.max_gpus = max_gpus
-
+        self.gpu_class = gpu_class
         if runtime_context.service_account is not None:
             logger.info(f"using '{runtime_context.service_account}' service account selected from runtime context")
             self.service_account = runtime_context.service_account
@@ -123,9 +124,14 @@ class CalrissianJob:
 
     def _create_pod_node_selector_cm(self):
         """Create configMap with pod node selector"""
+        if self.max_gpus and int(self.max_gpus) > 0: ## TODO
+            for key ,value in self.gpu_class.items():
+                self.pod_node_selector[key] = value
+            logger.info(f"Configured node selector with GPU. pod_node_selector: {self.pod_node_selector}")
         self.runtime_context.create_configmap(
             name="pod-node-selector",
             key="pod-node-selector",
+            #annotations= "pod-main",
             content=json.dumps(self.pod_node_selector),
         )
 
@@ -274,17 +280,12 @@ class CalrissianJob:
             backoff_limit=self.backoff_limit,
             ttl_seconds_after_finished=self.ttl_seconds_after_finished
         )
+    
     @staticmethod
-    def _get_resource_requirements(args):
+    def _get_resource_requirements(args):   ### might not needed
         try:
-            requests = {
-                "cpu": "1000m",      # default CPU request
-                "memory": "1G"       # default memory request
-            }
-            limits = {
-                "cpu": "2000m",      # default CPU limit
-                "memory": "2G"       # default memory limit
-            }
+            requests = {}
+            limits = {}
 
             if "--max-gpus" in args:
                 gpu_index = args.index("--max-gpus") + 1
@@ -298,13 +299,21 @@ class CalrissianJob:
 
                 # Optionally bump CPU and memory when GPU requested (adjust as needed)
                 requests["cpu"] = "2000m"
-                requests["memory"] = "4G"
-                limits["cpu"] = "4000m"
-                limits["memory"] = "8G"
+                requests["memory"] = "1G"
+                # limits["cpu"] = "4000m"
+                # limits["memory"] = "8G"
 
                 logger.info(f"GPU requirement parsed: {gpu_count} GPU(s), with adjusted CPU and memory")
 
             else:
+                requests = {
+                "cpu": "1000m",      # default CPU request
+                "memory": "1G"       # default memory request
+                }
+                limits = {
+                    "cpu": "2000m",      # default CPU limit
+                    "memory": "2G"       # default memory limit
+                }
                 logger.info("Using default CPU and memory resource requirements without GPU.")
 
             resource_obj = V1ResourceRequirements(requests=requests, limits=limits)
@@ -339,7 +348,10 @@ class CalrissianJob:
                     _exec=V1ExecAction(command=["/bin/sh", "-c", "sleep 30"])
                 )
             ),
-            resources=resources
+            resources=   V1ResourceRequirements(
+                requests={"cpu": "1000m", "memory": "1G"},
+                limits={"cpu": "2000m", "memory": "2G"},
+            ),
         )
 
         return container

@@ -1,0 +1,147 @@
+2025-06-27 17:46:04.397 | INFO     | tests.test_gpu:setUpClass:30 - -----
+------------------------------  unit test for GPU   ------------------------------
+
+
+2025-06-27 17:46:04.527 | INFO     | pycalrissian.context:initialise:125 - create namespace 'job-namespace-unit-test'.
+2025-06-27 17:46:04.570 | INFO     | pycalrissian.context:create_namespace:376 - creating namespace job-namespace-unit-test
+2025-06-27 17:46:09.681 | INFO     | pycalrissian.context:create_namespace:389 - namespace job-namespace-unit-test created
+2025-06-27 17:46:09.681 | INFO     | pycalrissian.context:initialise:142 - create role pod-manager-role
+2025-06-27 17:46:14.821 | INFO     | pycalrissian.context:create_role:428 - role pod-manager-role created
+2025-06-27 17:46:14.821 | INFO     | pycalrissian.context:initialise:151 - create role binding for role pod-manager-role
+2025-06-27 17:46:19.964 | INFO     | pycalrissian.context:create_role_binding:477 - role binding pod-manager-default-binding created
+2025-06-27 17:46:19.964 | INFO     | pycalrissian.context:initialise:142 - create role log-reader-role
+2025-06-27 17:46:25.101 | INFO     | pycalrissian.context:create_role:428 - role log-reader-role created
+2025-06-27 17:46:25.102 | INFO     | pycalrissian.context:initialise:151 - create role binding for role log-reader-role
+2025-06-27 17:46:30.245 | INFO     | pycalrissian.context:create_role_binding:477 - role binding log-reader-default-binding created
+2025-06-27 17:46:30.245 | INFO     | pycalrissian.context:initialise:162 - create persistent volume claim 'calrissian-wdir' of 10G with storage class civo-volume
+2025-06-27 17:46:35.394 | INFO     | pycalrissian.context:create_pvc:563 - pvc calrissian-wdir created
+2025-06-27 17:46:35.394 | INFO     | pycalrissian.context:initialise:192 - patch service account
+2025-06-27 17:46:35.491 | INFO     | tests.test_gpu:test_describe_catalog_with_gpu:76 - -----
+------------------------------  test_describe_catalog_with_gpu must succeed  ------------------------------
+
+
+2025-06-27 17:46:35.497 | INFO     | pycalrissian.job:__init__:78 - using default security context {'runAsUser': 0, 'runAsGroup': 0, 'fsGroup': 0}
+2025-06-27 17:46:35.497 | INFO     | pycalrissian.job:__init__:89 - job name: job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b
+2025-06-27 17:46:35.497 | INFO     | pycalrissian.job:__init__:90 - create CWL config map
+2025-06-27 17:46:40.649 | INFO     | pycalrissian.context:create_configmap:614 - config map cwl-workflow created
+2025-06-27 17:46:40.649 | INFO     | pycalrissian.job:__init__:92 - create processing parameters config map
+2025-06-27 17:46:45.794 | INFO     | pycalrissian.context:create_configmap:614 - config map params created
+2025-06-27 17:46:45.794 | INFO     | pycalrissian.job:__init__:100 - create Pod node selector config map
+2025-06-27 17:46:50.938 | INFO     | pycalrissian.context:create_configmap:614 - config map pod-node-selector created
+2025-06-27 17:46:50.941 | INFO     | pycalrissian.job:_get_calrissian_container:484 - pods created by calrissian will not be deleted
+2025-06-27 17:46:50.941 | INFO     | pycalrissian.job:_get_calrissian_container:490 - using Calrissian image: ghcr.io/duke-gcb/calrissian/calrissian:0.18.1
+2025-06-27 17:46:50.941 | INFO     | pycalrissian.job:_get_resource_requirements:305 - GPU requirement parsed: 1 GPU(s), with adjusted CPU and memory
+2025-06-27 17:46:50.941 | DEBUG    | pycalrissian.job:_get_resource_requirements:319 - Resource requirements created: {'claims': None,
+ 'limits': {'nvidia.com/gpu': '1'},
+ 'requests': {'cpu': '2000m', 'memory': '1G', 'nvidia.com/gpu': '1'}}
+2025-06-27 17:46:50.947 | INFO     | pycalrissian.job:to_yaml:158 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b serialized to job.yml
+2025-06-27 17:46:50.947 | INFO     | pycalrissian.execution:submit:32 - submit job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b
+2025-06-27 17:46:50.948 | INFO     | pycalrissian.job:_get_calrissian_container:484 - pods created by calrissian will not be deleted
+2025-06-27 17:46:50.948 | INFO     | pycalrissian.job:_get_calrissian_container:490 - using Calrissian image: ghcr.io/duke-gcb/calrissian/calrissian:0.18.1
+2025-06-27 17:46:50.948 | INFO     | pycalrissian.job:_get_resource_requirements:305 - GPU requirement parsed: 1 GPU(s), with adjusted CPU and memory
+2025-06-27 17:46:50.948 | DEBUG    | pycalrissian.job:_get_resource_requirements:319 - Resource requirements created: {'claims': None,
+ 'limits': {'nvidia.com/gpu': '1'},
+ 'requests': {'cpu': '2000m', 'memory': '1G', 'nvidia.com/gpu': '1'}}
+2025-06-27 17:46:51.009 | INFO     | pycalrissian.execution:submit:38 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b submitted
+2025-06-27 17:46:51.055 | WARNING  | tests.test_gpu:wait_for_pvc_bound:20 - PVC phase: Pending
+2025-06-27 17:47:01.518 | WARNING  | tests.test_gpu:wait_for_pvc_bound:20 - PVC phase: Pending
+2025-06-27 17:47:11.989 | WARNING  | tests.test_gpu:wait_for_pvc_bound:20 - PVC phase: Pending
+2025-06-27 17:47:22.459 | WARNING  | tests.test_gpu:wait_for_pvc_bound:20 - PVC phase: Pending
+2025-06-27 17:47:26.649 | SUCCESS  | tests.test_gpu:wait_for_pvc_bound:22 - PVC phase: Bound
+2025-06-27 17:47:26.748 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:47:31.805 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:47:36.860 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:47:41.913 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:47:46.970 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:47:52.021 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:47:57.075 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:48:02.131 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:48:07.185 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:48:12.241 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:48:17.294 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:48:22.345 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:48:27.393 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:48:32.449 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:48:37.503 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:48:42.556 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:48:47.608 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:48:52.660 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:48:57.714 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:49:02.770 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:49:07.826 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:49:12.882 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:49:17.933 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:49:22.990 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:49:28.037 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:49:33.090 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:49:38.141 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:49:43.199 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:49:48.250 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:49:53.306 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:49:58.357 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:50:03.412 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:50:08.467 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:50:13.523 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:50:18.576 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:50:23.631 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:50:28.684 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:50:33.738 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:50:38.792 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:50:43.845 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:50:48.897 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:50:53.951 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:50:59.009 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:51:04.062 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:51:09.113 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:51:14.165 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:51:19.216 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:51:24.274 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:51:29.332 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:51:34.389 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:51:39.443 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:51:44.497 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:51:49.553 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:51:54.608 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:51:59.663 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:52:04.717 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:52:09.770 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:52:14.822 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:52:19.874 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:52:24.924 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:52:29.977 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:52:35.033 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:52:40.086 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:52:45.140 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:52:50.193 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:52:55.247 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:53:00.300 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:53:05.351 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:53:10.407 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:53:15.458 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:53:20.510 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:53:25.565 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:53:30.617 | INFO     | pycalrissian.execution:monitor:210 - job job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b is active
+2025-06-27 17:53:35.619 | WARNING  | pycalrissian.execution:monitor:215 - reached wall time for execution, killing job
+2025-06-27 17:53:35.678 | INFO     | pycalrissian.context:dispose:204 - delete pod job-1751039195497273-19c32daa-b3b6-48af-9aaa-487f0d36761b-h67ms
+2025-06-27 17:53:35.744 | INFO     | pycalrissian.context:dispose:204 - delete pod main-pod-bbexmdsv
+2025-06-27 17:53:35.815 | INFO     | pycalrissian.context:dispose:207 - dispose namespace job-namespace-unit-test
+2025-06-27 17:53:35.869 | INFO     | pycalrissian.context:dispose:215 - namespace job-namespace-unit-test deleted
+E
+======================================================================
+ERROR: test_describe_catalog_with_gpu (tests.test_gpu.TestCalrissianExecution)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/t2/Desktop/p/EOEPCA/pycalrissian/tests/test_gpu.py", line 113, in test_describe_catalog_with_gpu
+    execution.monitor(interval=5, grace_period=600, wall_time=360)
+  File "/home/t2/Desktop/p/EOEPCA/pycalrissian/pycalrissian/execution.py", line 219, in monitor
+    self.runtime_context.batch_v1_api.delete_namespaced_job(
+  File "/home/t2/.local/share/hatch/env/virtual/pycalrissian/0fei3WJy/pycalrissian/lib/python3.10/site-packages/kubernetes/client/api/batch_v1_api.py", line 876, in delete_namespaced_job
+    return self.delete_namespaced_job_with_http_info(name, namespace, **kwargs)  # noqa: E501
+  File "/home/t2/.local/share/hatch/env/virtual/pycalrissian/0fei3WJy/pycalrissian/lib/python3.10/site-packages/kubernetes/client/api/batch_v1_api.py", line 933, in delete_namespaced_job_with_http_info
+    raise ApiTypeError(
+kubernetes.client.exceptions.ApiTypeError: Got an unexpected keyword argument 'timeout' to method delete_namespaced_job
+
+----------------------------------------------------------------------
+Ran 1 test in 451.473s
+
+FAILED (errors=1)

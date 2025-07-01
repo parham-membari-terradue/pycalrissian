@@ -22,11 +22,6 @@ requirements:
     envDef:
       LD_LIBRARY_PATH: /usr/local/nvidia/lib:/usr/local/nvidia/lib64
       PATH: /usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-  # cwltool:CUDARequirement:
-  #   cudaVersionMin: "11.2"
-  #   cudaComputeCapability: "3.0"
-  #   cudaDeviceCountMin: 1
-  #   cudaDeviceCountMax: 1
   
   DockerRequirement:
     dockerPull: nvcr.io/nvidia/tensorflow:23.12-tf2-py3

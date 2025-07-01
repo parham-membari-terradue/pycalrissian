@@ -76,7 +76,7 @@ class TestCalrissianExecution(unittest.TestCase):
         logger.info(f"-----\n------------------------------  test_describe_catalog_with_gpu must succeed  ------------------------------\n\n")
         os.environ["CALRISSIAN_IMAGE"] = "ghcr.io/duke-gcb/calrissian/calrissian:0.18.1"
 
-        with open("tests/gpu-test.cwl", "r") as stream:
+        with open("tests/gpu-test-cuda.cwl", "r") as stream:
             cwl = yaml.safe_load(stream)
 
         params = {

@@ -7,6 +7,7 @@ from typing import Dict, List
 
 import yaml
 from kubernetes import client
+from kubernetes.client import CoreV1Api
 from kubernetes.client.models.v1_container import V1Container
 from kubernetes.client.models.v1_exec_action import V1ExecAction
 from kubernetes.client.models.v1_lifecycle import V1Lifecycle
@@ -102,8 +103,31 @@ class CalrissianJob:
 
         self.calrissian_base_path = "/calrissian"
 
+    def validate_cwl_gpu_requirement(self) -> Dict:
+        """
+        Ensure GPU-related CUDA requirements are set in the CWL document.
+        Updates the self.cwl['requirements'] in-place and returns it.
+        """
+        if "requirements" not in self.cwl:
+            self.cwl["requirements"] = {}
+
+        cwl_requirements = self.cwl["requirements"]
+        if "cwltool:CUDARequirement" not in cwl_requirements:
+            logger.info("Propagating GPU CUDA requirements into CWL workflow")
+            cwl_requirements["cwltool:CUDARequirement"] = {
+                "class": "cwltool:CUDARequirement",
+                "cudaVersionMin": "11.2",
+                "cudaComputeCapability": "3.0",
+                "cudaDeviceCountMin": int(self.max_gpus),
+                "cudaDeviceCountMax": int(self.max_gpus),
+            }
+
+        return self.cwl
+        
     def _create_cwl_cm(self):
         """Create configMap with CWL"""
+        if self.max_gpus and int(self.max_gpus) > 0:
+            self.validate_cwl_gpu_requirement()
         self.runtime_context.create_configmap(
             name="cwl-workflow", key="cwl-workflow", content=yaml.dump(self.cwl)
         )
@@ -122,9 +146,18 @@ class CalrissianJob:
             content=json.dumps(self.pod_env_vars),
         )
 
+    def _validate_node_with_gpu_label(self):
+        if int(self.max_gpus) > 0:
+            v1 = CoreV1Api(self.runtime_context.api_client)
+            for key, value in self.gpu_class.items():
+                nodes = v1.list_node(label_selector=f'{key}={value}')
+                if not nodes.items:
+                    raise RuntimeError(f"GPU requested but no nodes with `{key}={value}` label are available.")
+
+
     def _create_pod_node_selector_cm(self):
         """Create configMap with pod node selector"""
-        if self.max_gpus and int(self.max_gpus) > 0: ## TODO
+        if self.max_gpus and int(self.max_gpus) > 0: 
             for key ,value in self.gpu_class.items():
                 self.pod_node_selector[key] = value
             logger.info(f"Configured node selector with GPU. pod_node_selector: {self.pod_node_selector}")
@@ -134,6 +167,7 @@ class CalrissianJob:
             #annotations= "pod-main",
             content=json.dumps(self.pod_node_selector),
         )
+        self._validate_node_with_gpu_label()
 
     def to_dict(self):
         """Serialize to a dictionary"""
@@ -157,6 +191,7 @@ class CalrissianJob:
             )
         logger.info(f"job {self.job_name} serialized to {file_path}")
 
+    
     def to_k8s_job(self):
         """Cast to kubernetes Job"""
 
@@ -272,6 +307,8 @@ class CalrissianJob:
             security_context=self.security_context,
             service_account=self.service_account
         )
+        
+        
 
         return self.create_job(
             name=self.job_name,
@@ -281,6 +318,7 @@ class CalrissianJob:
             ttl_seconds_after_finished=self.ttl_seconds_after_finished
         )
     
+
     @staticmethod
     def _get_resource_requirements(args):   ### might not needed
         try:
@@ -300,8 +338,7 @@ class CalrissianJob:
                 # Optionally bump CPU and memory when GPU requested (adjust as needed)
                 requests["cpu"] = "2000m"
                 requests["memory"] = "1G"
-                # limits["cpu"] = "4000m"
-                # limits["memory"] = "8G"
+                
 
                 logger.info(f"GPU requirement parsed: {gpu_count} GPU(s), with adjusted CPU and memory")
 
@@ -328,13 +365,11 @@ class CalrissianJob:
             logger.error(f"Unexpected error while creating resource requirements: {e}")
             raise
 
-
     @staticmethod
     def create_container(
         image, name, args, command, volume_mounts, env, pull_policy="Always"
     ):
-        resources = CalrissianJob._get_resource_requirements(args)
-
+        #resources = CalrissianJob._get_resource_requirements(args)
         container = client.V1Container(
             image=image,
             name=name,
@@ -348,7 +383,7 @@ class CalrissianJob:
                     _exec=V1ExecAction(command=["/bin/sh", "-c", "sleep 30"])
                 )
             ),
-            resources=   V1ResourceRequirements(
+            resources=  V1ResourceRequirements(
                 requests={"cpu": "1000m", "memory": "1G"},
                 limits={"cpu": "2000m", "memory": "2G"},
             ),
@@ -378,7 +413,7 @@ class CalrissianJob:
             ),
             metadata=client.V1ObjectMeta(name=name, labels={"pod_name": name}),
         )
-
+        
         return pod_template
 
     @staticmethod
@@ -397,9 +432,9 @@ class CalrissianJob:
                 ttl_seconds_after_finished=ttl_seconds_after_finished
             ),
         )
-
+        
         return job
-
+    
     def _get_calrissian_args(self) -> List:
 
         args = []
@@ -462,6 +497,7 @@ class CalrissianJob:
 
         return args
 
+    
     def _get_calrissian_container(self, volume_mounts: List) -> V1Container:
         """Creates the Calrissian container definition"""
         # set the env var using the metadata
@@ -485,7 +521,7 @@ class CalrissianJob:
             logger.info("pods created by calrissian will not be deleted")
 
         calrissian_image = os.getenv(
-            "CALRISSIAN_IMAGE", default="terradue/calrissian:0.18.1"
+            "CALRISSIAN_IMAGE", default="ghcr.io/duke-gcb/calrissian/calrissian:0.18.1"
         )
 
         logger.info(f"using Calrissian image: {calrissian_image}")

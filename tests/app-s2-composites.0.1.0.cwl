@@ -179,12 +179,10 @@ $graph:
   - class: CommandLineTool
     id: band_math_clt
     requirements:
-      
       InlineJavascriptRequirement: {}
       ResourceRequirement:
         coresMax: 2
         ramMax: 2000
-        gpus: 1
       DockerRequirement:
         dockerPull: docker.io/terradue/otb-7.2.0
     baseCommand: otbcli_BandMathX

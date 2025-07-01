@@ -71,7 +71,7 @@ class TestCalrissianExecution(unittest.TestCase):
     #@unittest.skipIf(os.getenv("CI_TEST_SKIP") == "1", "Test is skipped via env variable")
     def test_describe_catalog(self):
         logger.info(f"-----\n------------------------------  test_describe_catalog must succeed  ------------------------------\n\n")
-        os.environ["CALRISSIAN_IMAGE"] = "terradue/calrissian:0.11.0-logs"
+        os.environ["CALRISSIAN_IMAGE"] = "ghcr.io/duke-gcb/calrissian/calrissian:0.18.1"
 
         with open("tests/describe-catalog.cwl", "r") as stream:
             cwl = yaml.safe_load(stream)

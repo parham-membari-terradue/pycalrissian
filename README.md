@@ -35,3 +35,8 @@ You need to assign the below labels to the node you have
 kubectl label node minikube gpu=true
 kubectl label node minikube accelerator=nvidia
 ```
+> To test gpu option you can run unit test:
+>> ```bash
+>> hatch shell
+>> nose2 
+>> ```

@@ -57,7 +57,7 @@ class TestCalrissianExecution(unittest.TestCase):
 
         session = CalrissianContext(
             namespace=cls.namespace,
-            storage_class="civo-volume",
+            storage_class="standard",
             volume_size="10G",
             #kubeconfig_file= os.environ.get("KUBECONFIG", "~/.kube/kubeconfig-t2-dev.yaml"),
             image_pull_secrets=secret_config,
@@ -83,7 +83,7 @@ class TestCalrissianExecution(unittest.TestCase):
             "reference": "https://earth-search.aws.element84.com/v0/collections/sentinel-s2-l2a-cogs/items/S2B_10TFK_20210713_0_L2A"
         }
 
-        gpu_class= {'gpu-pool': 'A100-PCIE-40GB'}
+        gpu_class= {'accelerator': 'nvidia'}
         job = CalrissianJob(
             cwl=cwl,
             params=params,
@@ -91,11 +91,11 @@ class TestCalrissianExecution(unittest.TestCase):
             cwl_entry_point="main",
             #pod_env_vars=pod_env_vars,
             pod_node_selector={
-                "kubernetes.io/hostname": "eoepca-processing-test-cluster-1d5d-4f-pool-57cc-wdd8g",
+                "kubernetes.io/hostname": "minikube",
             },  
             debug=True,
             max_cores=2,
-            max_ram="16G",
+            max_ram="8G",
             keep_pods=True,
             backoff_limit=1,
             tool_logs=True,
@@ -104,10 +104,10 @@ class TestCalrissianExecution(unittest.TestCase):
         )
         job.to_yaml("job.yml")
         execution = CalrissianExecution(job=job, runtime_context=self.session)
-
+    
         execution.submit()
         wait_for_pvc_bound(self.session.core_v1_api, "calrissian-wdir", self.session.namespace)
-        execution.monitor(interval=5, grace_period=600, wall_time=360)
+        execution.monitor(interval=15, grace_period=1600, wall_time=1360)
         
         print(execution.get_log())
 

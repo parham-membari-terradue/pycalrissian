@@ -25,3 +25,9 @@ We suggest using microk8s and set the kubeconfig with:
 ```
 microk8s config > ~/.kube/config
 ```
+
+
+### Configure cluster with GPU:
+Please follow [this instruction](https://minikube.sigs.k8s.io/docs/tutorials/nvidia/) to install nvidia plugins on your cluster.
+kubectl label node minikube gpu=true
+kubectl label node minikube accelerator=nvidia

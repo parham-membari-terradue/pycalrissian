@@ -28,15 +28,19 @@ microk8s config > ~/.kube/config
 
 
 ### Configure cluster with GPU:
-Please follow [these instructions](https://minikube.sigs.k8s.io/docs/tutorials/nvidia/) to install nvidia plugins on your cluster.
-You need to assign the below labels to the node you have
+Please follow the [instructions](https://minikube.sigs.k8s.io/docs/tutorials/nvidia/) to install NVIDIA plugins on your cluster.
+
+Your GPU node must have appropriate labels so that the pod can be scheduled using a `nodeSelector`. For example:
 
 ```bash
-kubectl label node minikube gpu=true
-kubectl label node minikube accelerator=nvidia
+kubectl label node <your-node-name> gpu=true
+kubectl label node <your-node-name> accelerator=nvidia
 ```
-> To test gpu option you can run unit test:
->> ```bash
->> hatch shell
->> nose2 
->> ```
+
+
+> ✅ To test GPU functionality, you can run the unit tests:
+>
+> ```bash
+> hatch shell
+> nose2
+> ```

@@ -30,7 +30,7 @@ class TestCalrissianExecution(unittest.TestCase):
         logger.info(
             f"-----\n------------------------------  unit test for GPU   ------------------------------\n\n"
         )
-        cls.namespace = "job-namespace-unit-test"
+        cls.namespace = "job-namespace-3"
 
         username = "fabricebrito"
         password = "1f54397c-f15c-4be4-b9ea-4220fb2d80ce"

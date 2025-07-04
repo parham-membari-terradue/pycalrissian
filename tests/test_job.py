@@ -30,7 +30,7 @@ class TestCalrissianJob(unittest.TestCase):
         logger.info(
             f"-----\n------------------------------  unit test for test_job.py   ------------------------------\n\n"
         )
-        cls.namespace = "job-namespace"
+        cls.namespace = "job-namespace-4"
 
         username = "pippo"
         password = "pippo"

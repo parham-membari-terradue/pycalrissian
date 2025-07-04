@@ -31,7 +31,7 @@ class TestCalrissianExecution(unittest.TestCase):
     def setUpClass(cls):
         print(os.getenv("CI_TEST_SKIP", None))
         logger.info(f"-----\n------------------------------  unit test for test_execution.py   ------------------------------\n\n")
-        cls.namespace = "job-namespace"
+        cls.namespace = "job-namespace-2"
 
         username = "fabricebrito"
         password = "dckr_pat_cVqA0dOTLkQi6XxDklSPpH91Qic"
